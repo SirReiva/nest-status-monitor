@@ -1,8 +1,9 @@
 import { Injectable, Inject } from '@nestjs/common';
-import axios from 'axios';
 import { STATUS_MONITOR_OPTIONS_PROVIDER } from './status.monitor.constants';
 import { StatusMonitorConfiguration } from './config/status.monitor.configuration';
 import { HealthCheckConfiguration } from './config/health.check.configuration';
+import { HttpService } from '@nestjs/axios';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class HealthCheckService {
@@ -10,6 +11,7 @@ export class HealthCheckService {
 
   constructor(
     @Inject(STATUS_MONITOR_OPTIONS_PROVIDER) config: StatusMonitorConfiguration,
+    private httpService: HttpService,
   ) {
     this.healthChecks = config.healthChecks;
   }
@@ -17,13 +19,13 @@ export class HealthCheckService {
   checkAllEndpoints() {
     const checkPromises = [];
 
-    this.healthChecks.forEach(healthCheck => {
+    this.healthChecks.forEach((healthCheck) => {
       checkPromises.push(this.checkEndpoint(healthCheck));
     });
 
     let checkResults = [];
 
-    return this.allSettled(checkPromises).then(results => {
+    return this.allSettled(checkPromises).then((results) => {
       results.forEach((result, index) => {
         if (result.state === 'rejected') {
           checkResults.push({
@@ -51,18 +53,14 @@ export class HealthCheckService {
 
     uri += healthCheck.path;
 
-    //TODO (ivasiljevic) use http service instead of axios
-    return axios({
-      url: uri,
-      method: 'GET',
-    });
+    return lastValueFrom(this.httpService.get(uri));
   }
 
   private allSettled(promises: Promise<any>[]): Promise<any> {
-    let wrappedPromises = promises.map(p =>
+    let wrappedPromises = promises.map((p) =>
       Promise.resolve(p).then(
-        val => ({ state: 'fulfilled', value: val }),
-        err => ({ state: 'rejected', value: err }),
+        (val) => ({ state: 'fulfilled', value: val }),
+        (err) => ({ state: 'rejected', value: err }),
       ),
     );
 

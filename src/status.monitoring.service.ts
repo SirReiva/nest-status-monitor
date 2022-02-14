@@ -1,6 +1,6 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
-import * as pidusage from 'pidusage';
-import * as os from 'os';
+import pidusage from 'pidusage';
+import os from 'os';
 import { StatusMonitorGateway } from './status.monitor.gateway';
 import { STATUS_MONITOR_OPTIONS_PROVIDER } from './status.monitor.constants';
 import { StatusMonitorConfiguration } from './config/status.monitor.configuration';
@@ -44,19 +44,21 @@ export class StatusMonitoringService {
       timestamp: Date.now(),
     };
 
-    pidusage.stat(process.pid, (err, stat) => {
+    pidusage(process.pid, (err, stat) => {
       if (err) {
         return;
       }
 
+      const newStat: any = {...stat}
+
       const last = span.responses[span.responses.length - 1];
 
       // Convert from B to MB
-      stat.memory = stat.memory / 1024 / 1024;
-      stat.load = os.loadavg();
-      stat.timestamp = Date.now();
+      newStat.memory = newStat.memory / 1024 / 1024;
+      newStat.load = os.loadavg();
+      newStat.timestamp = Date.now();
 
-      span.os.push(stat);
+      span.os.push(newStat);
       if (
         !span.responses[0] ||
         last.timestamp + span.interval * 1000 < Date.now()

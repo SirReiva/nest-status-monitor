@@ -4,6 +4,7 @@ import {
   RequestMethod,
   DynamicModule,
 } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { StatusMonitorController } from './status.monitor.controller';
 import { StatusMonitorGateway } from './status.monitor.gateway';
 import { StatusMonitoringService } from './status.monitoring.service';
@@ -14,6 +15,7 @@ import { STATUS_MONITOR_OPTIONS_PROVIDER } from './status.monitor.constants';
 
 @Module({
   controllers: [StatusMonitorController.forRoot('monitor')],
+  imports: [HttpModule],
   providers: [
     StatusMonitorGateway,
     StatusMonitoringService,
@@ -30,6 +32,7 @@ export class StatusMonitorModule {
   static setUp(config: StatusMonitorConfiguration): DynamicModule {
     return {
       module: StatusMonitorModule,
+      imports: [HttpModule],
       providers: [
         {
           provide: STATUS_MONITOR_OPTIONS_PROVIDER,

@@ -5,7 +5,7 @@ import { HealthCheckService } from './health.check.service';
 import { PATH_METADATA } from '@nestjs/common/constants';
 import { STATUS_MONITOR_OPTIONS_PROVIDER } from './status.monitor.constants';
 import { StatusMonitorConfiguration } from './config/status.monitor.configuration';
-const Handlebars = require('handlebars');
+import Handlebars from 'handlebars';
 
 @Controller()
 export class StatusMonitorController {
