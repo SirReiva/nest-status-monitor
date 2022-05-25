@@ -309,3 +309,8 @@ socket.on('esm_stats', function(data) {
     });
   }
 });
+
+var evtSource = new EventSource(location.href + '/stream'); 
+evtSource.onmessage = function(e) {
+  console.warn(JSON.parse(e.data));
+}
