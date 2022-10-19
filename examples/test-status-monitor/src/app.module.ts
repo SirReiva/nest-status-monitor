@@ -8,6 +8,7 @@ import {
 import { HealthController } from './healthController';
 
 const statusMonitorConfig: StatusMonitorConfiguration = {
+  sseInterval: 5000,
   pageTitle: 'Nest.js Monitoring Page',
   port: 3001,
   path: '/status',

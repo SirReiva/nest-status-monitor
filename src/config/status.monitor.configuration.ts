@@ -10,4 +10,5 @@ export interface StatusMonitorConfiguration {
   healthChecks: HealthCheckConfiguration[];
   spans: SpansConfiguration[];
   chartVisibility: ChartVisibilityConfiguration;
+  sseInterval: number;
 }

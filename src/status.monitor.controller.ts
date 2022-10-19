@@ -23,7 +23,8 @@ export class StatusMonitorController {
 
   constructor(
     private readonly healtCheckService: HealthCheckService,
-    @Inject(STATUS_MONITOR_OPTIONS_PROVIDER) config: StatusMonitorConfiguration,
+    @Inject(STATUS_MONITOR_OPTIONS_PROVIDER)
+    private readonly config: StatusMonitorConfiguration,
     private readonly statusMonitoringService: StatusMonitoringService,
   ) {
     const bodyClasses = Object.keys(config.chartVisibility)
@@ -67,7 +68,7 @@ export class StatusMonitorController {
 
   @Sse('stream')
   eventSource() {
-    return interval(5000).pipe(
+    return interval(this.config.sseInterval).pipe(
       switchMap(() => of(this.statusMonitoringService.getData())),
       map((data) => ({ data } as MessageEvent)),
     );

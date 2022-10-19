@@ -56,7 +56,9 @@ export class HealthCheckService {
     return lastValueFrom(this.httpService.get(uri));
   }
 
-  private allSettled(promises: Promise<any>[]): Promise<any> {
+  private allSettled(
+    promises: Promise<any>[],
+  ): Promise<{ state: string; value: any }[]> {
     let wrappedPromises = promises.map((p) =>
       Promise.resolve(p).then(
         (val) => ({ state: 'fulfilled', value: val }),
